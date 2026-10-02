@@ -144,6 +144,7 @@ export default function Dashboard({ user, onLogout, onProfileUpdated }: { user: 
   const simulationIndex = useRef(0)
   const centeredOnUser = useRef(false)
   const rerouteSignature = useRef('')
+  const gpsWatchRef = useRef<number | null>(null)
   const currentRoute = matchAppRoute(pathname)
   const activeNav = currentRoute.navLabel
   const historyShuttleId = currentRoute.kind === 'shuttle-history' ? currentRoute.params.shuttleId || null : null
@@ -246,15 +247,22 @@ export default function Dashboard({ user, onLogout, onProfileUpdated }: { user: 
     return () => { /* shared realtime connection remains available to trip messaging */ }
   }, [])
 
-  useEffect(() => {
+  const requestUserLocation = useCallback(() => {
+    const localHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    if (!window.isSecureContext && !localHost) {
+      setGpsState('unavailable')
+      setGpsMessage('Phone GPS requires an HTTPS connection')
+      return
+    }
     if (!navigator.geolocation) {
       setGpsState('unavailable')
       setGpsMessage('This browser does not support phone GPS')
       return
     }
 
+    if (gpsWatchRef.current !== null) navigator.geolocation.clearWatch(gpsWatchRef.current)
     setGpsState('requesting')
-    const watchId = navigator.geolocation.watchPosition(
+    gpsWatchRef.current = navigator.geolocation.watchPosition(
       (position) => {
         setUserLocation({
           latitude: position.coords.latitude,
@@ -269,13 +277,20 @@ export default function Dashboard({ user, onLogout, onProfileUpdated }: { user: 
         }
       },
       (error) => {
-        setGpsState(error.code === error.PERMISSION_DENIED ? 'denied' : 'unavailable')
-        setGpsMessage(error.code === error.PERMISSION_DENIED ? 'Location permission denied' : 'Location unavailable — using campus demo view')
+        const denied = error.code === error.PERMISSION_DENIED
+        setGpsState(denied ? 'denied' : 'unavailable')
+        setGpsMessage(denied ? 'Location is blocked for this site — allow it in the browser site settings' : 'Phone location is unavailable — check GPS and try again')
       },
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 12000 },
     )
-    return () => navigator.geolocation.clearWatch(watchId)
   }, [])
+
+  useEffect(() => {
+    requestUserLocation()
+    return () => {
+      if (gpsWatchRef.current !== null) navigator.geolocation.clearWatch(gpsWatchRef.current)
+    }
+  }, [requestUserLocation])
 
   const effectiveLocation = userLocation ?? { latitude: campusCenter[0], longitude: campusCenter[1], accuracy: 0 }
   const liveShuttles = useMemo(() => shuttles.map((shuttle) => ({
@@ -433,10 +448,12 @@ export default function Dashboard({ user, onLogout, onProfileUpdated }: { user: 
 
   const locateMe = () => {
     if (gpsState === 'denied' || gpsState === 'unavailable') {
-      notify('Please allow Location in your phone/browser settings, then tap locate again')
+      requestUserLocation()
+      notify('Requesting location again. Allow it for this exact Netlify site if prompted.')
       return
     }
     if (!userLocation) {
+      requestUserLocation()
       notify('Waiting for your phone GPS signal…')
       return
     }

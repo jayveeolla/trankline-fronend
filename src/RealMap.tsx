@@ -155,7 +155,7 @@ function LeafletCampusMap({ shuttles, selectedId, onSelect, userLocation, mapReq
 
 export default function RealCampusMap(props: { shuttles: MapShuttle[]; selectedId: string; onSelect: (id: string) => void; userLocation: UserLocation | null; mapRequest: MapRequest; routeDetails: ApiRouteDetails | null }) {
   const googleApiKey = import.meta.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-  const provider = import.meta.env.VITE_MAP_PROVIDER || 'vector'
+  const provider = import.meta.env.VITE_MAP_PROVIDER || 'osm'
   if (provider === 'vector') return <VectorMap {...props} />
   return provider === 'google' && googleApiKey ? <GoogleCampusMap {...props} apiKey={googleApiKey} /> : <LeafletCampusMap {...props} />
 }
