@@ -1,0 +1,9 @@
+{
+  "name": "Trackline TDK Incoming Shuttle",
+  "short_name": "Trackline",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c111b",
+  "theme_color": "#0c111b",
+  "description": "Database-backed incoming employee shuttle tracking for TDK."
+}
