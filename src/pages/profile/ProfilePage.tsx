@@ -29,11 +29,13 @@ export default function ProfilePage({ user, notify, onUpdated }: { user: Session
       image.onerror = () => reject(new Error('Could not process the selected photo.'))
       image.onload = () => {
         const maxSize = 512
-        const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight))
         const canvas = document.createElement('canvas')
-        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale))
-        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale))
-        canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height)
+        const sourceSize = Math.min(image.naturalWidth, image.naturalHeight)
+        const sourceX = (image.naturalWidth - sourceSize) / 2
+        const sourceY = (image.naturalHeight - sourceSize) / 2
+        canvas.width = maxSize
+        canvas.height = maxSize
+        canvas.getContext('2d')?.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, maxSize, maxSize)
         resolve(canvas.toDataURL('image/jpeg', .86))
       }
       image.src = String(reader.result)
