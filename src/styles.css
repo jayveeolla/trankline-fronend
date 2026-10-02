@@ -1158,3 +1158,18 @@ body.auth-light .auth-screen{background:radial-gradient(circle at 20% 0%,#e5f2ff
   border-color: #b6e6cf;
   background: #e6f8ee;
 }
+
+@media (max-width: 620px) {
+  .auth-screen {
+    min-height: 100dvh;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
+
+  .auth-brand {
+    margin-bottom: 40px;
+  }
+}
