@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node init && vite",
+    "build": "node init && tsc -b && vite build",
     "preview": "vite preview",
     "db:check": "node server/check-db.cjs",
     "db:migrate": "node server/migrate.cjs",
@@ -13,7 +13,7 @@
     "db:seed": "node server/migrate.cjs",
     "server": "node server/index.cjs",
     "server:dev": "node --watch server/index.cjs",
-    "dev:all": "concurrently -k \"npm:server:dev\" \"npm:dev\""
+    "dev:all": "node init && concurrently -k \"npm:server:dev\" \"npm:dev\""
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
@@ -30,6 +30,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.468.0",
     "mysql2": "^3.11.5",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",

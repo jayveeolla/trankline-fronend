@@ -58,7 +58,7 @@ export default function WorkspacePage({ section, routeKind, routeParams, navigat
 
   return <section className="workspace-page">
     <div className="page-heading workspace-page-heading">
-      <div><div className="eyebrow"><span className="pulse-dot" /> TRACKLINE WORKSPACE</div><h1>{section}</h1><p>{descriptions[section] ?? 'Manage your campus transit workspace.'}</p></div>
+      <div><div className="eyebrow"><span className="pulse-dot" /> TRACKLINE WORKSPACE</div><h1>{section}</h1><p>{descriptions[section] ?? 'Manage your trankline workspace.'}</p></div>
       {/* <button className="primary-button" onClick={() => notify(`${section} view is ready`)}><Sparkles size={16} /> Quick action</button> */}
     </div>
 
